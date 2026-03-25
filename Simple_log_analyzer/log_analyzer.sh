@@ -1,7 +1,6 @@
 #!/bin/bash
 
 LOG_PATH=$1
-# LOG_PATH="./syslog"
 
 validate_log_file() {
   if [[ -z "$LOG_PATH" ]]; then
