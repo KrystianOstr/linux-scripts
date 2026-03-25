@@ -3,8 +3,6 @@
 LOG_PATH=$1
 # LOG_PATH="./syslog"
 
-echo $LOG_PATH
-
 validate_log_file() {
   if [[ -z "$LOG_PATH" ]]; then
       echo "Nie podano ścieżki do pliku"
@@ -13,6 +11,16 @@ validate_log_file() {
 
   if [[ ! -e "$LOG_PATH" ]]; then
     echo "Plik nie istnieje"
+    exit 1
+  fi
+
+  if [[ ! -f "$LOG_PATH" ]]; then
+    echo "To nie jest plik"
+    exit 1
+  fi
+
+  if [[ ! -r "$LOG_PATH" ]]; then
+    echo "Brak praw do odczytu"
     exit 1
   fi
 }
@@ -27,6 +35,7 @@ print_menu() {
     echo "4. Pokaż tylko linie z błędami"
     echo "0. Wyjdź"
     echo "========================="
+    echo "Wybierz opcję:"
 }
 
 count_log_levels() {
@@ -51,17 +60,22 @@ show_last_10_lines() {
   tail -n 10 "$LOG_PATH"
 }
 
-check_key_word_in_log() {
+search_keyword() {
   echo "Czytam logi..."
   echo "========================="
   echo "Podaj wyszukiwane słowo: "
 
   read -r user_word
 
-  if [[ -n "$user_word" ]]; then
-    grep -n "$user_word" "$LOG_PATH"
-  else
+  if [[ -z "$user_word" ]]; then
     echo "Proszę podać wyszukiwane słowo"
+    return
+  fi
+
+  if grep -n "$user_word" "$LOG_PATH"; then
+    :
+  else
+    echo "Brak logów z wyszukiwanym słowem"
   fi
 }
 
@@ -69,7 +83,11 @@ show_lines_with_errors() {
   echo "Czytam logi..."
   echo "========================="
 
-  grep "ERROR" "$LOG_PATH"
+  if grep "ERROR" "$LOG_PATH"; then
+    :
+  else
+    echo "Brak linii z błędami"
+  fi
 }
 
 #FLOW
@@ -92,7 +110,7 @@ while true; do
     show_last_10_lines
     ;;
     3)
-    check_key_word_in_log
+    search_keyword
     ;;
     4)
     show_lines_with_errors
