@@ -59,46 +59,38 @@ show_listening_ports() {
   echo "Sprawdzam nasłuchujące porty..."
   echo "=============================="
 
+  full_data=$(ss -tuln | awk 'NR > 1 {print $1, "- " $5}' )
 
-
-
-  for line in $(ss -tuln); do
-  echo "$line"
-    protocol=$(line | awk '{print $1}')
-    full_address=$(line | awk '{print $5}')
-    
-    echo "${protocol} - ${full_address}"
-  done
+  echo "${full_data}"
 }
 
 
-
 while true; do
-print_menu
+  print_menu
 
-read -r user_choice
+  read -r user_choice
 
-case "$user_choice" in
-  1)
-    show_ip_info    
-    ;;
-  2)
-    check_internet_connection
-    ;;
-  3)
-    check_host_connection
-    ;;
-  4)
-    show_listening_ports
-    ;;
-  0)
-    echo "Zamykanie..."
-    break
-    ;;
-  *)
-    echo "Podaj jedną z poprawnych opcji."
-    ;;
-esac
+  case "$user_choice" in
+    1)
+      show_ip_info    
+      ;;
+    2)
+      check_internet_connection
+      ;;
+    3)
+      check_host_connection
+      ;;
+    4)
+      show_listening_ports
+      ;;
+    0)
+      echo "Zamykanie..."
+      break
+      ;;
+    *)
+      echo "Podaj jedną z poprawnych opcji."
+      ;;
+  esac
 
 done
 
