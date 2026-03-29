@@ -55,7 +55,7 @@ report() {
   echo
 
   echo "--- TOP ERRORS ---"
-  grep "ERROR" "$log_file" | cut -d ' ' -f 6- | sort | uniq -c | sort -nr | awk '{print $1,$2}'
+  grep "ERROR" "$log_file" | cut -d ' ' -f 6- | sort | uniq -c | sort -nr |  awk '{printf "%s", $1; for (i=2; i<=NF; i++) printf " %s", $i; print ""}'
 
   echo
 }
